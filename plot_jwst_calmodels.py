@@ -28,11 +28,11 @@ def set_params(lw=1.5, universal_color='#262626', fontsize=16):
        labelcolor=universal_color,
        axisbelow=True)
     rc('image', origin='lower')
-    rc('xtick.major', width=lw*0.75)
-    rc('xtick.minor', width=lw*0.5)
+    rc('xtick.major', width=lw)
+    rc('xtick.minor', width=lw)
     rc('xtick', color=universal_color)
-    rc('ytick.major', width=lw*0.75)
-    rc('ytick.minor', width=lw*0.5)
+    rc('ytick.major', width=lw)
+    rc('ytick.minor', width=lw)
     rc('ytick', color=universal_color)
     rc('grid', linewidth=lw)
     rc('legend', loc='best', numpoints=1, scatterpoints=1, handlelength=1.5,
@@ -71,6 +71,7 @@ if __name__ == '__main__':
     astar = Table.read('1743045_mod_002.fits')
     gstar = Table.read('p330e_mod_002.fits')
     wdstar = Table.read('gd71_mod_010.fits')
+    # wdstar = Table.read('10lac_mod_002.fits')
 
 #    x = astar['WAVELENGTH']*1e-4
 #    indxs, = np.where((x > 0.6) & (x < 29.))
@@ -91,11 +92,13 @@ if __name__ == '__main__':
     wdstar_wave = trunc_rebin(wdstar['WAVELENGTH']*1e-4, rfac)
     wdstar_flux = trunc_rebin(wdstar['FLUX'], rfac)
 
+    fontsize = 18
+
+    set_params(lw=2., fontsize=fontsize)
+
     xsize = 15.0
     ysize = 9.0
     fig, ax = plt.subplots(nrows=3, figsize=(xsize, ysize), sharex=True)
-
-    set_params(lw=1., fontsize=16)
 
     if args.waverange == 'all':
         ptype = 'linear'
@@ -149,6 +152,7 @@ if __name__ == '__main__':
     cax.plot(wdstar_wave, (wdstar_wave**4)*wdstar_flux, 'b-',
              label="R ~ 3,000")
     cax.set_yscale(ptype)
+    cax.set_ylim(0.25,1.0)
     cax.set_ylim(wd_yrange)
     cax.set_title("WD star (gd71)")
     cax.set_xlabel("wavelength [$\mu m$]")

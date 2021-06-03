@@ -170,7 +170,7 @@ if __name__ == "__main__":
         alpha=0.25,
     )
     cax.plot(astar_wave, (astar_wave ** 4) * astar_flux, "b-", label="R ~ 3,000")
-    cax.plot(astarr100_wave, (astarr100_wave ** 4) * astarr100_flux, "r-", label="R ~ 150")
+    cax.plot(astarr100_wave, (astarr100_wave ** 4) * astarr100_flux, "m-", label="R ~ 150")
     cax.set_xscale("log")
     cax.set_xlim(kxrange)
     cax.set_yscale(ptype)
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     cax.set_yscale(ptype)
     cax.set_ylim(g_yrange)
     cax.text(0.7, 2.5e-14, "G star (p330e)")
-    cax.plot(gstarr100_wave, (gstarr100_wave ** 4) * gstarr100_flux, "r-", label="R ~ 150")
+    cax.plot(gstarr100_wave, (gstarr100_wave ** 4) * gstarr100_flux, "m-", label="R ~ 150")
     cax.set_xlabel(r"wavelength [$\mu m$]")
     cax.set_ylabel(r"$\lambda^4 F(\lambda)$")
     cax.tick_params("both", length=10, width=2, which="major")
@@ -217,7 +217,7 @@ if __name__ == "__main__":
         alpha=0.25,
     )
     cax.plot(wdstar_wave, (wdstar_wave ** 4) * wdstar_flux, "b-", label="R ~ 3,000")
-    cax.plot(wdstarr100_wave, (wdstarr100_wave ** 4) * wdstarr100_flux, "r-", label="R ~ 150")
+    cax.plot(wdstarr100_wave, (wdstarr100_wave ** 4) * wdstarr100_flux, "m-", label="R ~ 150")
     cax.set_yscale(ptype)
     cax.set_ylim(wd_yrange)
     cax.text(0.7, 2.5e-15, "WD star (gd71)")

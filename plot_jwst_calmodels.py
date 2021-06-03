@@ -101,9 +101,9 @@ if __name__ == "__main__":
     parser = initialize_parser()
     args = parser.parse_args()
 
-    astar = Table.read("1743045_mod_002.fits")
-    gstar = Table.read("p330e_mod_002.fits")
-    wdstar = Table.read("gd71_mod_010.fits")
+    astar = Table.read("1743045_mod_003.fits")
+    gstar = Table.read("p330e_mod_004.fits")
+    wdstar = Table.read("gd71_mod_011.fits")
     # wdstar = Table.read('10lac_mod_002.fits')
 
     #    x = astar['WAVELENGTH']*1e-4
@@ -117,13 +117,21 @@ if __name__ == "__main__":
 
     # rebin to a resolution of 3000 (assume input spectrum is R=300,000)
     rfac = 50
+    r100fac = 1000
     astar_wave = trunc_rebin(astar["WAVELENGTH"] * 1e-4, rfac)
     astar_flux = trunc_rebin(astar["FLUX"], rfac)
+    astarr100_wave = trunc_rebin(astar["WAVELENGTH"] * 1e-4, r100fac)
+    astarr100_flux = trunc_rebin(astar["FLUX"], r100fac)
     gstar_wave = trunc_rebin(gstar["WAVELENGTH"] * 1e-4, rfac)
     gstar_flux = trunc_rebin(gstar["FLUX"], rfac)
+    gstarr100_wave = trunc_rebin(gstar["WAVELENGTH"] * 1e-4, r100fac)
+    gstarr100_flux = trunc_rebin(gstar["FLUX"], r100fac)
     rfac = 10
+    r100fac = 200
     wdstar_wave = trunc_rebin(wdstar["WAVELENGTH"] * 1e-4, rfac)
     wdstar_flux = trunc_rebin(wdstar["FLUX"], rfac)
+    wdstarr100_wave = trunc_rebin(wdstar["WAVELENGTH"] * 1e-4, r100fac)
+    wdstarr100_flux = trunc_rebin(wdstar["FLUX"], r100fac)
 
     fontsize = 18
 
@@ -162,6 +170,7 @@ if __name__ == "__main__":
         alpha=0.25,
     )
     cax.plot(astar_wave, (astar_wave ** 4) * astar_flux, "b-", label="R ~ 3,000")
+    cax.plot(astarr100_wave, (astarr100_wave ** 4) * astarr100_flux, "r-", label="R ~ 150")
     cax.set_xscale("log")
     cax.set_xlim(kxrange)
     cax.set_yscale(ptype)
@@ -185,6 +194,7 @@ if __name__ == "__main__":
     cax.set_yscale(ptype)
     cax.set_ylim(g_yrange)
     cax.text(0.7, 2.5e-14, "G star (p330e)")
+    cax.plot(gstarr100_wave, (gstarr100_wave ** 4) * gstarr100_flux, "r-", label="R ~ 150")
     cax.set_xlabel(r"wavelength [$\mu m$]")
     cax.set_ylabel(r"$\lambda^4 F(\lambda)$")
     cax.tick_params("both", length=10, width=2, which="major")
@@ -207,6 +217,7 @@ if __name__ == "__main__":
         alpha=0.25,
     )
     cax.plot(wdstar_wave, (wdstar_wave ** 4) * wdstar_flux, "b-", label="R ~ 3,000")
+    cax.plot(wdstarr100_wave, (wdstarr100_wave ** 4) * wdstarr100_flux, "r-", label="R ~ 150")
     cax.set_yscale(ptype)
     cax.set_ylim(wd_yrange)
     cax.text(0.7, 2.5e-15, "WD star (gd71)")

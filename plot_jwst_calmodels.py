@@ -146,7 +146,7 @@ if __name__ == "__main__":
         kxrange = [0.6, 29.0]
         a_yrange = np.array([0, 9.0]) * 1e-15
         g_yrange = np.array([0.0, 3.5]) * 1e-14
-        wd_yrange = np.array([1.4, 2.75]) * 1e-15
+        wd_yrange = np.array([1.4, 2.85]) * 1e-15
     elif args.waverange == "nir":
         ptype = "linear"
         kxrange = [0.6, 5.1]
@@ -170,12 +170,14 @@ if __name__ == "__main__":
         alpha=0.25,
     )
     cax.plot(astar_wave, (astar_wave ** 4) * astar_flux, "b-", label="R ~ 3,000")
-    cax.plot(astarr100_wave, (astarr100_wave ** 4) * astarr100_flux, "m-", label="R ~ 150")
+    cax.plot(
+        astarr100_wave, (astarr100_wave ** 4) * astarr100_flux, "m-", label="R ~ 150"
+    )
     cax.set_xscale("log")
     cax.set_xlim(kxrange)
     cax.set_yscale(ptype)
     cax.set_ylim(a_yrange)
-    cax.text(0.7, 7e-15, "A star (1743045)")
+    cax.text(0.7, 7e-15, "A dwarf (J1743045)")
     cax.set_ylabel(r"$\lambda^4 F(\lambda)$")
     cax.tick_params("both", length=10, width=2, which="major")
     cax.tick_params("both", length=5, width=1, which="minor")
@@ -193,8 +195,10 @@ if __name__ == "__main__":
     cax.plot(gstar_wave, (gstar_wave ** 4) * gstar_flux, "b-", label="R ~ 3,000")
     cax.set_yscale(ptype)
     cax.set_ylim(g_yrange)
-    cax.text(0.7, 2.5e-14, "G star (p330e)")
-    cax.plot(gstarr100_wave, (gstarr100_wave ** 4) * gstarr100_flux, "m-", label="R ~ 150")
+    cax.text(0.65, 2.75e-14, "solar analog (GSPC P330-E)")
+    cax.plot(
+        gstarr100_wave, (gstarr100_wave ** 4) * gstarr100_flux, "m-", label="R ~ 150"
+    )
     cax.set_xlabel(r"wavelength [$\mu m$]")
     cax.set_ylabel(r"$\lambda^4 F(\lambda)$")
     cax.tick_params("both", length=10, width=2, which="major")
@@ -217,10 +221,12 @@ if __name__ == "__main__":
         alpha=0.25,
     )
     cax.plot(wdstar_wave, (wdstar_wave ** 4) * wdstar_flux, "b-", label="R ~ 3,000")
-    cax.plot(wdstarr100_wave, (wdstarr100_wave ** 4) * wdstarr100_flux, "m-", label="R ~ 150")
+    cax.plot(
+        wdstarr100_wave, (wdstarr100_wave ** 4) * wdstarr100_flux, "m-", label="R ~ 150"
+    )
     cax.set_yscale(ptype)
     cax.set_ylim(wd_yrange)
-    cax.text(0.7, 2.5e-15, "WD star (gd71)")
+    cax.text(0.7, 2.55e-15, "hot star (GD 71)")
     cax.set_ylabel(r"$\lambda^4 F(\lambda)$")
     cax.tick_params("both", length=10, width=2, which="major")
     cax.tick_params("both", length=5, width=1, which="minor")

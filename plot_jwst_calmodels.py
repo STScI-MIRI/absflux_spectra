@@ -7,8 +7,13 @@ from matplotlib import rc
 from matplotlib.ticker import ScalarFormatter
 
 from astropy.table import Table
+import astropy.units as u
 
 from rebin_ndarray import bin_ndarray
+
+
+FNU = u.erg / (u.cm ** 2 * u.s * u.Hz)
+FLAM = u.erg / (u.cm ** 2 * u.s * u.AA)
 
 
 def set_params(lw=1.5, universal_color="#262626", fontsize=16):
@@ -115,23 +120,35 @@ if __name__ == "__main__":
     #    print(np.mean(x[1:]/delta))
     #    exit()
 
+    awave = astar["WAVELENGTH"].quantity.value * 1e-4 * u.micron
+    aflux = astar["FLUX"].quantity.value * FLAM
+    aflux_mJy = aflux.to(u.mJy, u.spectral_density(awave))
+
+    gwave = gstar["WAVELENGTH"].quantity.value * 1e-4 * u.micron
+    gflux = gstar["FLUX"].quantity.value * FLAM
+    gflux_mJy = gflux.to(u.mJy, u.spectral_density(gwave))
+
+    wdwave = wdstar["WAVELENGTH"].quantity.value * 1e-4 * u.micron
+    wdflux = wdstar["FLUX"].quantity.value * FLAM
+    wdflux_mJy = wdflux.to(u.mJy, u.spectral_density(wdwave))
+
     # rebin to a resolution of 3000 (assume input spectrum is R=300,000)
     rfac = 50
     r100fac = 1000
     astar_wave = trunc_rebin(astar["WAVELENGTH"] * 1e-4, rfac)
-    astar_flux = trunc_rebin(astar["FLUX"], rfac)
+    astar_flux = trunc_rebin(aflux_mJy, rfac)
     astarr100_wave = trunc_rebin(astar["WAVELENGTH"] * 1e-4, r100fac)
-    astarr100_flux = trunc_rebin(astar["FLUX"], r100fac)
+    astarr100_flux = trunc_rebin(aflux_mJy, r100fac)
     gstar_wave = trunc_rebin(gstar["WAVELENGTH"] * 1e-4, rfac)
-    gstar_flux = trunc_rebin(gstar["FLUX"], rfac)
+    gstar_flux = trunc_rebin(gflux_mJy, rfac)
     gstarr100_wave = trunc_rebin(gstar["WAVELENGTH"] * 1e-4, r100fac)
-    gstarr100_flux = trunc_rebin(gstar["FLUX"], r100fac)
+    gstarr100_flux = trunc_rebin(gflux_mJy, r100fac)
     rfac = 10
     r100fac = 200
     wdstar_wave = trunc_rebin(wdstar["WAVELENGTH"] * 1e-4, rfac)
-    wdstar_flux = trunc_rebin(wdstar["FLUX"], rfac)
+    wdstar_flux = trunc_rebin(wdflux_mJy, rfac)
     wdstarr100_wave = trunc_rebin(wdstar["WAVELENGTH"] * 1e-4, r100fac)
-    wdstarr100_flux = trunc_rebin(wdstar["FLUX"], r100fac)
+    wdstarr100_flux = trunc_rebin(wdflux_mJy, r100fac)
 
     fontsize = 18
 
@@ -144,9 +161,9 @@ if __name__ == "__main__":
     if args.waverange == "all":
         ptype = "linear"
         kxrange = [0.6, 29.0]
-        a_yrange = np.array([0, 9.0]) * 1e-15
-        g_yrange = np.array([0.0, 3.5]) * 1e-14
-        wd_yrange = np.array([1.4, 2.85]) * 1e-15
+        a_yrange = np.array([0.0, 30.])
+        g_yrange = np.array([0.0, 120.])
+        wd_yrange = np.array([4., 10.])
     elif args.waverange == "nir":
         ptype = "linear"
         kxrange = [0.6, 5.1]
@@ -156,29 +173,29 @@ if __name__ == "__main__":
     elif args.waverange == "mir":
         ptype = "linear"
         kxrange = [4.9, 29.0]
-        a_yrange = np.array([6.5, 8.75]) * 1e-15
-        g_yrange = np.array([2.25, 3.4]) * 1e-14
-        wd_yrange = np.array([2.5, 3.0]) * 1e-15
+        a_yrange = np.array([0.0, 30.])
+        g_yrange = np.array([0.0, 120.])
+        wd_yrange = np.array([5., 10.])
 
     astar["WAVELENGTH"] *= 1e-4
     cax = ax[1]
     cax.plot(
         astar["WAVELENGTH"],
-        (astar["WAVELENGTH"] ** 4) * astar["FLUX"],
+        (awave ** 2) * aflux_mJy,
         "k-",
         label="R = 300,000",
         alpha=0.25,
     )
-    cax.plot(astar_wave, (astar_wave ** 4) * astar_flux, "b-", label="R ~ 3,000")
+    cax.plot(astar_wave, (astar_wave ** 2) * astar_flux, "b-", label="R ~ 3,000")
     cax.plot(
-        astarr100_wave, (astarr100_wave ** 4) * astarr100_flux, "m-", label="R ~ 150"
+        astarr100_wave, (astarr100_wave ** 2) * astarr100_flux, "m-", label="R ~ 150"
     )
     cax.set_xscale("log")
     cax.set_xlim(kxrange)
     cax.set_yscale(ptype)
     cax.set_ylim(a_yrange)
-    cax.text(0.7, 7e-15, "A dwarf (J1743045)")
-    cax.set_ylabel(r"$\lambda^4 F(\lambda)$")
+    cax.text(0.7, 25., "A dwarf (J1743045)")
+    cax.set_ylabel(r"$\lambda^2 F(\nu)$")
     cax.tick_params("both", length=10, width=2, which="major")
     cax.tick_params("both", length=5, width=1, which="minor")
     cax.legend(loc="lower right")
@@ -187,20 +204,20 @@ if __name__ == "__main__":
     cax = ax[2]
     cax.plot(
         gstar["WAVELENGTH"],
-        (gstar["WAVELENGTH"] ** 4) * gstar["FLUX"],
+        (gwave ** 2) * gflux_mJy,
         "k-",
         label="R = 300,000",
         alpha=0.25,
     )
-    cax.plot(gstar_wave, (gstar_wave ** 4) * gstar_flux, "b-", label="R ~ 3,000")
+    cax.plot(gstar_wave, (gstar_wave ** 2) * gstar_flux, "b-", label="R ~ 3,000")
     cax.set_yscale(ptype)
     cax.set_ylim(g_yrange)
-    cax.text(0.65, 2.75e-14, "solar analog (GSPC P330-E)")
+    cax.text(0.65, 85.0, "solar analog (GSPC P330-E)")
     cax.plot(
-        gstarr100_wave, (gstarr100_wave ** 4) * gstarr100_flux, "m-", label="R ~ 150"
+        gstarr100_wave, (gstarr100_wave ** 2) * gstarr100_flux, "m-", label="R ~ 150"
     )
     cax.set_xlabel(r"wavelength [$\mu m$]")
-    cax.set_ylabel(r"$\lambda^4 F(\lambda)$")
+    cax.set_ylabel(r"$\lambda^2 F(\nu)$")
     cax.tick_params("both", length=10, width=2, which="major")
     cax.tick_params("both", length=5, width=1, which="minor")
     cax.legend(loc="lower right")
@@ -215,19 +232,19 @@ if __name__ == "__main__":
     cax = ax[0]
     cax.plot(
         wdstar["WAVELENGTH"],
-        (wdstar["WAVELENGTH"] ** 4) * wdstar["FLUX"],
+        (wdwave ** 2) * wdflux_mJy,
         "k-",
         label="R = 30,000",
         alpha=0.25,
     )
-    cax.plot(wdstar_wave, (wdstar_wave ** 4) * wdstar_flux, "b-", label="R ~ 3,000")
+    cax.plot(wdstar_wave, (wdstar_wave ** 2) * wdstar_flux, "b-", label="R ~ 3,000")
     cax.plot(
-        wdstarr100_wave, (wdstarr100_wave ** 4) * wdstarr100_flux, "m-", label="R ~ 150"
+        wdstarr100_wave, (wdstarr100_wave ** 2) * wdstarr100_flux, "m-", label="R ~ 150"
     )
     cax.set_yscale(ptype)
     cax.set_ylim(wd_yrange)
-    cax.text(0.7, 2.55e-15, "hot star (GD 71)")
-    cax.set_ylabel(r"$\lambda^4 F(\lambda)$")
+    cax.text(0.7, 9.0, "hot star (GD 71)")
+    cax.set_ylabel(r"$\lambda^2 F(\nu)$")
     cax.tick_params("both", length=10, width=2, which="major")
     cax.tick_params("both", length=5, width=1, which="minor")
     cax.legend(loc="lower right")
